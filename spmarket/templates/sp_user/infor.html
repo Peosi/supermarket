@@ -1,0 +1,101 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>超市</title>
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-siteapp"/>
+    <link rel="icon" type="image/png" href="{% static '/theme/default/images/favicon.png' %}">
+    <link href="{% static 'css/amazeui.min.css' %}" rel="stylesheet" type="text/css"/>
+    <link href="{% static 'css/style.css' %}" rel="stylesheet" type="text/css"/>
+    <link href="{% static 'css/check.css' %}" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+<header data-am-widget="header" class="am-header am-header-default sq-head ">
+    <div class="am-header-left am-header-nav">
+        <a href="javascript:history.back()" class="">
+            <i class="am-icon-chevron-left"></i>
+        </a>
+    </div>
+    <h1 class="am-header-title">
+        <a href="" class="">个人资料</a>
+    </h1>
+</header>
+<div style="height: 49px;"></div>
+<form action="" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <ul class="safty1">
+        <li>
+            <a href="">
+                <i style="margin-top: 25px;">头像</i>
+                <div class="infor-pic">
+                    <img src="{{ MEDIA_URL }}{{ user.head }}"/>
+                </div>
+                <input type="file" name="head">
+            </a>
+        </li>
+        <li>
+
+            <i>昵称</i>
+            <input class="infor-tele" name="nickname" value="{{ user.nickname }}"/>
+
+        </li>
+        <li>
+
+            <i>性别</i>
+            <i class="infor-tele">
+                {% if gender == 1 %}
+                    <label class="am-radio-inline">
+                        <input type="radio" name="gender" checked="checked" value="1" data-am-ucheck>男
+                    </label>
+                    <label class="am-radio-inline">
+                        <input type="radio" name="gender" value="2" data-am-ucheck>女
+                    </label>
+                {% endif %}
+                <label class="am-radio-inline">
+                    <input type="radio" name="gender" value="1" data-am-ucheck>男
+                </label>
+                <label class="am-radio-inline">
+                    <input type="radio" name="gender" checked="checked" value="2" data-am-ucheck>女
+                </label>
+
+            </i>
+
+        </li>
+        <li>
+
+            <i>生日</i>
+             <input type="date" name="birth_of_date" value="{{ user.birth_of_date|date:'Y-m-d' }}" class="infor-tele" placeholder="出生日期"/>
+
+        </li>
+    </ul>
+    <div style="height: 10px; background: #efefef;"></div>
+    <ul class="safty1">
+        <li>
+            <i>学校</i>
+            <input class="infor-tele" name="school_name" value="{{ user.school_name }}"/>
+        </li>
+        <li>
+            <i>位置</i>
+            <input class="infor-tele" name="address" value="{{ user.address }}"/>
+        </li>
+        <li>
+            <i>故乡</i>
+            <input class="infor-tele" name="hometown" value="{{ user.hometown }}"/>
+        </li>
+        <li>
+            <i>手机</i>
+            <input class="infor-tele" name="phone" value="{{ user.phone }}"/>
+        </li>
+    </ul>
+    <input type="submit" class="login-btn" value="保存">
+</form>
+<script src="{% static 'js/jquery.min.js' %}"></script>
+<script src="{% static 'js/amazeui.min.js' %}"></script>
+</body>
+</html>

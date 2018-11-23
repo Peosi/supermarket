@@ -25,7 +25,7 @@ SECRET_KEY = 'y@f&qfn%#m)2+et1x!ga4i6v8i5=w@bow%1vx9&+%har7s#-1x'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -37,7 +37,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'supermarket.apps.SupermarketConfig',
+    'sp_user.apps.SupermarketConfig',
+    'sp_cart.apps.SpCartConfig',
+    'sp_goods.apps.SpGoodsConfig',
+    'sp_order.apps.SpOrderConfig',
 ]
 
 MIDDLEWARE = [
