@@ -18,6 +18,8 @@ from django.contrib import admin
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    # 上传部件自动调用的上传地址
+    url(r'^ckeditor/', include("ckeditor_uploader.urls")),
     url(r'^user/', include("sp_user.urls", namespace="sp_user")),  # 用户模块
     url(r'^goods/', include("sp_goods.urls", namespace="sp_goods")),  # 商品模块
     url(r'^cart/', include("sp_cart.urls", namespace="sp_cart")),  # 购物车模块

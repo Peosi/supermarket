@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     'sp_order.apps.SpOrderConfig',
     'sp_goods.apps.SpGoodsConfig',
     'sp_cart.apps.SpCartConfig',
+    'ckeditor', #添加ckeditor富文本编辑器
+    'ckeditor_uploader',  # 添加ckeditor富文本编辑器文件上传部件
 ]
 
 MIDDLEWARE = [
@@ -125,8 +127,11 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static")
 ]
-# 添加缓存的配置
+# STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
+
+
+# 添加缓存的配置
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
@@ -152,4 +157,16 @@ MEDIA_URL = "/static/media/"
 #配置该URL对应的物理目录存储地址
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'static/media')
+
+
+#设置ckeditor上传目录
+CKEDITOR_UPLOAD_PATH = "uploads/"
+
+#设置ckeditor在后台显示的样式
+# 编辑器样式配置
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar': 'full',
+    },
+}
 
