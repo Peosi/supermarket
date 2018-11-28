@@ -38,11 +38,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'haystack',  # 全文检索框架
     'sp_user.apps.SpUserConfig',
     'sp_order.apps.SpOrderConfig',
     'sp_goods.apps.SpGoodsConfig',
     'sp_cart.apps.SpCartConfig',
-    'ckeditor', #添加ckeditor富文本编辑器
+    'ckeditor',  # 添加ckeditor富文本编辑器
     'ckeditor_uploader',  # 添加ckeditor富文本编辑器文件上传部件
 ]
 
@@ -130,7 +131,6 @@ STATICFILES_DIRS = [
 # STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
 
-
 # 添加缓存的配置
 CACHES = {
     "default": {
@@ -142,27 +142,25 @@ CACHES = {
     }
 }
 
-
-#配置session的存储引擎
+# 配置session的存储引擎
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 SESSION_CACHE_ALIAS = "default"
 
-#短信验证秘钥
+# 短信验证秘钥
 ACCESS_KEY_ID = "LTAI2qSiJdWP87em"
 ACCESS_KEY_SECRET = "FzORQ587PgGBoOAdmxzCjaxQi8klUi"
 
-#分配资源url
+# 分配资源url
 MEDIA_URL = "/static/media/"
 
-#配置该URL对应的物理目录存储地址
+# 配置该URL对应的物理目录存储地址
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'static/media')
 
-
-#设置ckeditor上传目录
+# 设置ckeditor上传目录
 CKEDITOR_UPLOAD_PATH = "uploads/"
 
-#设置ckeditor在后台显示的样式
+# 设置ckeditor在后台显示的样式
 # 编辑器样式配置
 CKEDITOR_CONFIGS = {
     'default': {
@@ -170,3 +168,15 @@ CKEDITOR_CONFIGS = {
     },
 }
 
+# 全文检索框架的配置
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        # 配置搜索引擎
+        'ENGINE': 'utils.haystack.whoosh_cn_backend.WhooshEngine',
+        # 配置索引文件存储目录
+        'PATH': os.path.join(BASE_DIR, 'whoosh_index'),
+    },
+}
+# 当添加、修改、删除数据时，自动生成索引
+HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
+HAYSTACK_SEARCH_RESULTS_PER_PAGE = 20

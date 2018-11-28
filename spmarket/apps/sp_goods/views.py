@@ -3,7 +3,7 @@ from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.shortcuts import render, redirect
 
 from sp_goods.models import GoodsSku, Cycle, Activity, Special, GoodsClass
-
+from django_redis import get_redis_connection
 
 # 首页
 def index(request):
@@ -59,11 +59,28 @@ def category(request, cate_id, order):
         page = paginator.page(paginator.num_pages)
     except PageNotAnInteger:
         page = paginator.page(1)
+
+    #显示购物车商品
+    cart_count = 0
+    if request.session.get("ID"):
+        user_id = request.session.get("ID")
+        # 登陆, 从redis中取出购物车中的数据
+        r = get_redis_connection("default")
+        # 准备键
+        cart_key = "cart_key_{}".format(user_id)
+        # 取值
+        cart_values = r.hvals(cart_key)
+        for v in cart_values:
+            cart_count += int(v)
+
+
+
     context = {
         "goodclasses": goodclasses,
         "goodsSkus": page,
         "cate_id": cate_id,
         "order":order,
+        "cart_count":cart_count,
 
     }
     return render(request, "sp_goods/category.html", context)
