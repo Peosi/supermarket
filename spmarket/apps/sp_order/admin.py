@@ -1,3 +1,6 @@
 from django.contrib import admin
 
-# Register your models here.
+from sp_order.models import Transport
+
+# 运输方式
+admin.site.register(Transport)

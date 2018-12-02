@@ -1,7 +1,9 @@
 from django import forms
 from django_redis import get_redis_connection
 
-from sp_user.models import SpUser
+from sp_user.models import SpUser, SpAddress
+
+
 class ForgetModelForm(forms.ModelForm):
     password1 = forms.CharField(max_length=16,
                                 min_length=6,
@@ -12,7 +14,8 @@ class ForgetModelForm(forms.ModelForm):
                                 }
                                 )
     password2 = forms.CharField(error_messages={'required': "确认密码必填"})
-    verify_code = forms.CharField(error_messages={'required':"验证码必填"})
+    verify_code = forms.CharField(error_messages={'required': "验证码必填"})
+
     class Meta:
         model = SpUser
         fields = ['phone', ]
@@ -40,7 +43,6 @@ class ForgetModelForm(forms.ModelForm):
         if not rs:
             raise forms.ValidationError("这个电话还没注册")
 
-
     def clean_verify_code(self):
         # 获取用户表单提交的
         phone = self.cleaned_data.get("phone")
@@ -62,6 +64,7 @@ class ForgetModelForm(forms.ModelForm):
     # def clean_checkbox(self):
     #     checkbox = self.
 
+
 class RegModelForm(forms.ModelForm):
     password1 = forms.CharField(max_length=16,
                                 min_length=6,
@@ -72,7 +75,8 @@ class RegModelForm(forms.ModelForm):
                                 }
                                 )
     password2 = forms.CharField(error_messages={'required': "确认密码必填"})
-    verify_code = forms.CharField(error_messages={'required':"验证码必填"})
+    verify_code = forms.CharField(error_messages={'required': "验证码必填"})
+
     class Meta:
         model = SpUser
         fields = ['phone', ]
@@ -164,3 +168,69 @@ class LoginModelForm(forms.ModelForm):
             return cleaned_data
         else:
             return cleaned_data
+
+
+# 添加地址表单
+
+class AddressModelForm(forms.ModelForm):
+    class Meta:
+        model = SpAddress
+        fields = ['hcity', 'hproper', 'harea', 'detail', 'username', 'phone', 'isDefault']
+        error_messages = {
+            "harea": {
+                "required": "收货地址必填"
+            },
+            "detail": {
+                "required": "详细地址必填"
+            },
+            "phone": {
+                "required": "手机号码必填"
+            },
+            "username": {
+                "required": "收货人姓名必填"
+            },
+        }
+
+    def clean(self):
+        user_id = self.data.get('user_id')
+        count = SpAddress.objects.filter(user_id=user_id, isDelete=False).count()
+        if count >= 6:
+            raise forms.ValidationError("收货地址数量不能超过6")
+
+
+
+        isDefault = self.cleaned_data.get("isDefault")
+        if isDefault:
+            SpAddress.objects.filter(user_id=user_id).update(isDefault=False)
+        return self.cleaned_data
+
+#修改地址表单
+class EditAddressModelForm(forms.ModelForm):
+    class Meta:
+        model = SpAddress
+        fields = ['hcity', 'hproper', 'harea', 'detail', 'username', 'phone', 'isDefault']
+        error_messages = {
+            "harea": {
+                "required": "收货地址必填"
+            },
+            "detail": {
+                "required": "详细地址必填"
+            },
+            "phone": {
+                "required": "手机号码必填"
+            },
+            "username": {
+                "required": "收货人姓名必填"
+            },
+        }
+
+    def clean(self):
+        user_id = self.data.get('user_id')
+        # count = SpAddress.objects.filter(user_id=user_id, isDelete=False).count()
+        # if count >= 6:
+        #     raise forms.ValidationError("收货地址数量不能超过6")
+
+        isDefault = self.cleaned_data.get("isDefault")
+        if isDefault:
+            SpAddress.objects.filter(user_id=user_id).update(isDefault=False)
+        return self.cleaned_data

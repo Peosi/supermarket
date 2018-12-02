@@ -22,12 +22,12 @@
     <div class="am-header-left am-header-nav">
         <a href="city.html" class="" style="color: #fff;">
             <img src="{% static 'images/city.png' %}"/>
-            <p style="font-size: 12px; margin-top: -35px;">南昌</p>
+            <p style="font-size: 12px; margin-top: -35px;">成都</p>
         </a>
     </div>
     <h1 class="am-header-title1">
         <div class="search-box">
-            <a href="village.html" class="index-search">南昌大学前湖校区∨</a>
+            <a href="village.html" class="index-search">全球最low网商</a>
             <!--  <input type="submit" value="" class="search-icon" /> -->
         </div>
     </h1>
@@ -128,16 +128,15 @@
         <img src="{% static 'images/ts.png' %}" width="26"/>
         {{ s.name }}
     </div>
-
     <ul data-am-widget="gallery" class="am-gallery pro-list am-avg-sm-2 am-avg-md-2 am-avg-lg-4 am-gallery-default">
-        {% for acts_goods in actss.specialgoods_set.all %}
+        {% for acts_goods in s.specialgoods_set.all %}
             <li>
                 <div class="am-gallery-item">
-                    <a href="{% url 'sp_goods:详情' s_goods.sku_id.pk %}" class="">
-                        <img src=" {{ MEDIA_URL }}{{ s_goods.sku_id.url }}"/>
+                    <a href="{% url 'sp_goods:详情' acts_goods.sku_id.pk %}" class="">
+                        <img src=" {{ MEDIA_URL }}{{ acts_goods.sku_id.url }}"/>
                         <h3 class="am-gallery-title">
-                            {{ s_goods.sku_id.spu_id.SpuName }}&emsp;{{ s_goods.sku_id.sku_name }}</h3>
-                        <div class="am-gallery-desc">￥{{ s_goods.sku_id.price }}</div>
+                            {{ acts_goods.sku_id.spu_id.SpuName }}&emsp;{{ s_goods.sku_id.sku_name }}</h3>
+                        <div class="am-gallery-desc">￥{{ acts_goods.sku_id.price }}</div>
                     </a>
                 </div>
             </li>
@@ -161,7 +160,7 @@
 <div data-am-widget="navbar" class="am-navbar am-cf am-navbar-default sq-foot am-no-layout" id="">
     <ul class="am-navbar-nav am-cf am-avg-sm-5">
         <li>
-            <a href="index.html" class="curr">
+            <a href="{% url 'sp_goods:首页' %}" class="curr">
                 <span class="am-icon-home"></span>
                 <span class="am-navbar-label">首页</span>
             </a>
@@ -179,7 +178,7 @@
             </a>
         </li>
         <li>
-            <a href="allorder.html" class="">
+            <a href="{% url 'sp_order:true_order' %}" class="">
                 <span class="am-icon-file-text"></span>
                 <span class="am-navbar-label">订单</span>
             </a>

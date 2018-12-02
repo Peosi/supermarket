@@ -15,6 +15,9 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from django.contrib import admin
+from django.views.decorators.cache import cache_page
+
+from sp_goods.views import index
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
@@ -26,4 +29,5 @@ urlpatterns = [
     url(r'^goods/', include("sp_goods.urls", namespace="sp_goods")),  # 商品模块
     url(r'^cart/', include("sp_cart.urls", namespace="sp_cart")),  # 购物车模块
     url(r'^order/', include("sp_order.urls", namespace="sp_order")),  # 订单模块
+    url(r'^$', cache_page(3600)(index)),#网站的首页
 ]

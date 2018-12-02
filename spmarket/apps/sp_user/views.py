@@ -8,9 +8,10 @@ from django.shortcuts import render, redirect
 from django.views import View
 from django_redis import get_redis_connection
 
-from sp_user.forms import RegModelForm, LoginModelForm, ForgetModelForm
+from db.base_view import BaseVerifyView
+from sp_user.forms import RegModelForm, LoginModelForm, ForgetModelForm, AddressModelForm, EditAddressModelForm
 from sp_user.helper import login, send_sms
-from sp_user.models import SpUser
+from sp_user.models import SpUser, SpAddress
 
 
 # 注册
@@ -94,7 +95,7 @@ class MemeberView(View):
     def get(self, request):
         context = {
             "phone": request.session.get('phone'),
-            "head":request.session.get('head'),
+            "head": request.session.get('head'),
         }
         return render(request, 'sp_user/member.html', context)
 
@@ -107,7 +108,7 @@ class InfoView(View):
 
     def get(self, request):
         user_id = request.session.get("ID")
-        user = SpUser.objects.get(pk = user_id)
+        user = SpUser.objects.get(pk=user_id)
         context = {
             "user": user
         }
@@ -160,15 +161,99 @@ def send_msg_phone(request):
 
 
 # 收货地址
-class AddressView(View):
+class AddressView(BaseVerifyView):
     def get(self, request):
-        return render(request, 'sp_user/gladdress.html')
+        user_id = request.session.get("ID")
+        addresses = SpAddress.objects.filter(user_id=user_id, isDelete=False).order_by("-isDefault")
+        context = {
+            'addresses': addresses
+        }
+        return render(request, 'sp_user/gladdress.html', context)
 
     def post(self, request):
         pass
 
 
-#全部订单
+# 添加收货地址
+class AddAddressView(BaseVerifyView):
+    def get(self, request):
+        return render(request, 'sp_user/address.html')
+
+    def post(self, request):
+        data = request.POST.dict()
+        data['user_id'] = request.session.get("ID")
+        form = AddressModelForm(data)
+        if form.is_valid():
+            form.instance.user_id = request.session.get("ID")
+            form.save()
+            return redirect("sp_user:address")
+        else:
+            context = {
+                "form": form
+            }
+        return render(request, 'sp_user/address.html', context)
+
+
+# 修改收货地址
+class EditAddressView(BaseVerifyView):
+    def get(self, request, id):
+        user_id = request.session.get("ID")
+        try:
+            address = SpAddress.objects.get(user_id=user_id, pk=id)
+        except SpAddress.DoesNotExist:
+            return redirect("sp_user:address")
+        context = {
+            "address": address
+        }
+        return render(request, 'sp_user/address-edit.html', context)
+
+    def post(self, request, id):
+        data = request.POST.dict()
+        user_id = request.session.get("ID")
+        data['user_id'] = user_id
+        form = EditAddressModelForm(data)
+        if form.is_valid():
+            cleaned_data = form.cleaned_data
+            id = data.get('id')
+            SpAddress.objects.filter(user_id=user_id, pk=id).update(**cleaned_data)
+            return redirect("sp_user:address")
+        else:
+            context = {
+                "form": form,
+                "address": data
+            }
+            return render(request, 'sp_user/address.html', context)
+
+
+# 删除地址
+
+def delAddress(request):
+    if request.method == 'POST':
+        user_id = request.session.get("ID")
+        id = request.POST.get("id")
+        if user_id is None:
+            return JsonResponse({"code": 1, "errmsg": "没有登陆!"})
+        SpAddress.objects.filter(user_id=user_id, pk=id).update(isDelete=True)
+        return JsonResponse({"code": 0})
+    else:
+        return JsonResponse({"code": 2, "errmsg": "请求方式错误"})
+
+
+# 设置默认值
+def defAddress(request):
+    if request.method == 'POST':
+        user_id = request.session.get("ID")
+        id = request.POST.get("id")
+        if user_id is None:
+            return JsonResponse({"code": 1, "errmsg": "没有登陆!"})
+        SpAddress.objects.update(isDefault = False)
+        SpAddress.objects.filter(user_id=user_id, pk=id).update(isDefault=True)
+        return JsonResponse({"code": 0})
+    else:
+        return JsonResponse({"code": 2, "errmsg": "请求方式错误"})
+
+
+# 全部订单
 
 class AllorderView(View):
 
